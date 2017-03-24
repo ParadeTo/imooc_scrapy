@@ -19,7 +19,8 @@ pip install virtualenvwrapper-win
 WORKON_HOME
 ## deactivate
 ## workon **
-## mkvirtualenv --python=path project
+## mkvirtualenv --python=path\python.exe project
+如果还是报vcruntime140.dll缺失，可用``virtualenv -p E:\soft\Python36\python.exe testProject``创建
 
 # windows下包安装出错
 www.lfd.uci.edu/~gohlke/pythonlibs/
