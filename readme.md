@@ -2,11 +2,12 @@
 ## mysql下载
 https://dev.mysql.com/downloads/installer/
 
-## python3 path
+## python3 path 
+最好用3.5
 /Library/Frameworks/Python.framework/Versions/3.5/bin/python3.5
 
 ## python豆瓣源
-pip install *** -i https://pypi.douban.com/simple
+pip install *** -i https://pypi.douban.com/simple/
 
 ## virtualenv
 以python3创建一个目录
@@ -52,3 +53,6 @@ s = '我用python' # window下是gb2312 linux下是utf8
 s.encode("utf8") # 会出错，s必须是unicode
 s.decode("gb2312").encode("utf8") # linux utf8
 ```
+# scrapy windows下
+** 安装pywin32 http://www.lfd.uci.edu/~gohlke/pythonlibs/#pywin32
+** 拷贝Lib\site-packages\pywin32_system32 下的文件到系统的system32下面
