@@ -56,3 +56,20 @@ s.decode("gb2312").encode("utf8") # linux utf8
 # scrapy windows下
 ** 安装pywin32 http://www.lfd.uci.edu/~gohlke/pythonlibs/#pywin32
 ** 拷贝Lib\site-packages\pywin32_system32 下的文件到系统的system32下面
+
+# item
+## jobbole article
+CREATE TABLE `jobbole` (
+  `title` varchar(200) NOT NULL DEFAULT '',
+  `create_date` date DEFAULT NULL,
+  `url` varchar(300) NOT NULL DEFAULT '',
+  `url_object_id` varchar(50) NOT NULL DEFAULT '',
+  `front_image_url` varchar(300) DEFAULT '',
+  `front_image_path` varchar(200) DEFAULT NULL,
+  `comment_nums` int(11) DEFAULT '0',
+  `fav_nums` int(11) DEFAULT '0',
+  `praise_nums` int(11) DEFAULT '0',
+  `tags` varchar(200) DEFAULT NULL,
+  `content` longtext,
+  PRIMARY KEY (`url_object_id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
