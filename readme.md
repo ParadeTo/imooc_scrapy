@@ -58,6 +58,8 @@ s.decode("gb2312").encode("utf8") # linux utf8
 ** 拷贝Lib\site-packages\pywin32_system32 下的文件到系统的system32下面
 
 # item
+## github scrapy-djangoitem
+
 ## jobbole article
 CREATE TABLE `jobbole` (
   `title` varchar(200) NOT NULL DEFAULT '',
@@ -73,3 +75,9 @@ CREATE TABLE `jobbole` (
   `content` longtext,
   PRIMARY KEY (`url_object_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+## mysql
+### windows
+mysqlclient
+
+# 安装requests
