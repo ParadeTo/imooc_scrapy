@@ -61,6 +61,45 @@ s.decode("gb2312").encode("utf8") # linux utf8
 ## github scrapy-djangoitem
 
 ## jobbole article
+### 知乎
+```
+DROP TABLE IF EXISTS `zhihu_question`;
+CREATE TABLE `zhihu_question` (
+  `zhihu_id` bigint(20) NOT NULL,
+  `topics` varchar(255) DEFAULT NULL,
+  `url` varchar(300) NOT NULL,
+  `title` varchar(200) NOT NULL,
+  `content` longtext NOT NULL,
+  `create_time` datetime DEFAULT NULL,
+  `update_time` datetime DEFAULT NULL,
+  `answer_num` int(11) NOT NULL DEFAULT '0',
+  `comments_num` int(11) NOT NULL DEFAULT '0',
+  `watch_user_num` int(11) NOT NULL DEFAULT '0',
+  `click_num` int(11) NOT NULL DEFAULT '0',
+  `crawl_time` datetime NOT NULL,
+  `crawl_update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`zhihu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+```
+DROP TABLE IF EXISTS `zhihu_answer`;
+CREATE TABLE `zhihu_answer` (
+  `zhihu_id` bigint(20) NOT NULL,
+  `url` varchar(300) NOT NULL,
+  `question_id` bigint(20) NOT NULL,
+  `author_id` varchar(100) DEFAULT NULL,
+  `content` longtext NOT NULL,
+  `praise_num` int(11) NOT NULL DEFAULT '0',
+  `comments_num` int(11) NOT NULL DEFAULT '0',
+  `create_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `update_time` datetime NOT NULL,
+  `crawl_time` datetime NOT NULL,
+  `crawl_update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`zhihu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+### jobbole
+```
 CREATE TABLE `jobbole` (
   `title` varchar(200) NOT NULL DEFAULT '',
   `create_date` date DEFAULT NULL,
@@ -74,7 +113,9 @@ CREATE TABLE `jobbole` (
   `tags` varchar(200) DEFAULT NULL,
   `content` longtext,
   PRIMARY KEY (`url_object_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
+
 
 ## mysql
 ### windows
