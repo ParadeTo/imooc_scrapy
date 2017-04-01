@@ -115,10 +115,35 @@ CREATE TABLE `jobbole` (
   PRIMARY KEY (`url_object_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
-
+### lagou
+```
+DROP TABLE IF EXISTS `lagou_job`;
+CREATE TABLE `lagou_job` (
+  `url` varchar(300) NOT NULL,
+  `url_object_id` varchar(50) NOT NULL,
+  `title` varchar(100) NOT NULL,
+  `salary` varchar(20) DEFAULT NULL,
+  `job_city` varchar(10) DEFAULT NULL,
+  `work_years` varchar(100) DEFAULT NULL,
+  `degree_need` varchar(30) DEFAULT NULL,
+  `job_type` varchar(20) DEFAULT NULL,
+  `publish_time` varchar(20) NOT NULL,
+  `tags` varchar(100) DEFAULT NULL,
+  `job_advantage` varchar(1000) DEFAULT NULL,
+  `job_desc` longtext NOT NULL,
+  `job_addr` varchar(50) DEFAULT NULL,
+  `company_url` varchar(300) DEFAULT NULL,
+  `company_name` varchar(100) DEFAULT NULL,
+  `crawl_time` datetime NOT NULL,
+  `crawl_update_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`url_object_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+```
 
 ## mysql
 ### windows
 mysqlclient
 
 # 安装requests
+
+# cmder
