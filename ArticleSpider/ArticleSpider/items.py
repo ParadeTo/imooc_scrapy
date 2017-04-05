@@ -56,7 +56,7 @@ class ArticleItemLoader(ItemLoader):
 class JobBoleArticleItem(scrapy.Item):
     title = scrapy.Field()
     create_date = scrapy.Field(
-        input_processor=MapCompose(date_convert)
+        input_processor=MapCompose(date_convert) # input_processor会对list中单个值进行处理
     )
     url = scrapy.Field()
     url_object_id = scrapy.Field()
@@ -78,3 +78,54 @@ class JobBoleArticleItem(scrapy.Item):
         output_processor=Join(",")
     )
     content = scrapy.Field()
+
+
+class ZhihuQuestionItem(scrapy.Item):
+    # 知乎的问题 item
+    zhihu_id = scrapy.Field()
+    topics = scrapy.Field()
+    url = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()
+    answer_num = scrapy.Field()
+    comments_num = scrapy.Field()
+    watch_user_num = scrapy.Field()
+    click_num = scrapy.Field()
+    crawl_time = scrapy.Field()
+
+
+class ZhihuAnswerItem(scrapy.Item):
+    # 知乎的问题回答item
+    zhihu_id = scrapy.Field()
+    url = scrapy.Field()
+    question_id = scrapy.Field()
+    author_id = scrapy.Field()
+    content = scrapy.Field()
+    praise_num = scrapy.Field()
+    comments_num = scrapy.Field()
+    create_time = scrapy.Field()
+    update_time = scrapy.Field()
+    crawl_time = scrapy.Field()
+
+class LagouJobItemLoader(ItemLoader):
+    # 自定义itemloader
+    default_output_processor = TakeFirst()
+
+
+class LagouJobItem(scrapy.Item):
+    title = scrapy.Field()
+    url = scrapy.Field()
+    url_object_id = scrapy.Field()
+    salary = scrapy.Field()
+    job_city = scrapy.Field()
+    work_years = scrapy.Field()
+    degree_need = scrapy.Field()
+    job_type = scrapy.Field()
+    publish_time = scrapy.Field()
+    job_advantage = scrapy.Field()
+    job_desc = scrapy.Field()
+    job_addr = scrapy.Field()
+    company_name = scrapy.Field()
+    company_url = scrapy.Field()
+    tags = scrapy.Field()
+    crawl_time = scrapy.Field()
