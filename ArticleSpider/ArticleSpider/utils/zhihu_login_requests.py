@@ -3,6 +3,10 @@
 import requests
 import re
 
+import time
+
+from PIL import Image
+
 try: # py3
     import cookielib
 except: # py2
@@ -43,6 +47,23 @@ def get_xsrf():
     else:
         return ""
 
+def get_captcha():
+    t = str(int(time.time() * 1000))
+    captcha_url = "https://www.zhihu.com/captcha.gif?r={0}&type=login".format(t)
+    t = session.get(captcha_url, headers=header)
+    with open("captcha.jpg", "wb") as f:
+        f.write(t.content)
+        f.close()
+    try:
+        im = Image.open('captcha.jpg')
+        im.show()
+        im.close()
+    except:
+        pass
+
+    captcha = input("输入验证码\n>")
+    return captcha
+
 def get_index():
     response = session.get('https://www.zhihu.com', headers=header)
     with open("index_page.html", "wb") as f:
@@ -51,13 +72,17 @@ def get_index():
 
 def zhihu_login(account, password):
     """知乎登录"""
+
+    captcha = get_captcha()
+
     if re.match("1\d{10}", account):
         print ("手机号码登录")
         post_url = "https://www.zhihu.com/login/phone_num"
         post_data = {
             "_xsrf": get_xsrf(),
             "phone_num": account,
-            "password": password
+            "password": password,
+            "captcha": captcha
         }
 
     else:
@@ -67,7 +92,8 @@ def zhihu_login(account, password):
             post_data = {
                 "_xsrf": get_xsrf(),
                 "phone_num": account,
-                "password": password
+                "password": password,
+                "captcha": captcha
             }
 
     response_text = session.post(post_url, data=post_data, headers=header)
@@ -75,5 +101,6 @@ def zhihu_login(account, password):
 
 
 # get_xsrf()
-# zhihu_login("18611112949", "81051766")
-get_index()
+zhihu_login("18611112949", "81051766")
+# get_index()
+# get_captcha()
