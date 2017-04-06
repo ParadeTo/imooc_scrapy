@@ -9,14 +9,22 @@ import re
 import scrapy
 
 from scrapy.loader import ItemLoader
+from w3lib.html import remove_tags
+
 from utils.common import extract_num
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from settings import SQL_DATE_FORMAT, SQL_DATETIME_FORMAT
+
 
 class ArticlespiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
+
+
+def remove_splash(value):
+    # 拉勾-去掉工作城市之间的斜杠
+    return value.replace("/", "")
 
 
 def date_convert(value):
@@ -33,6 +41,14 @@ def remove_comment_tags(value):
         return ""
     else:
         return value
+
+
+def handle_jobaddr(value):
+    return re.subn(r"[\s|查看地图]", "", value)
+    # value.replace()
+    # addr_list = value.split("\n")
+    # addr_list = [item.strip() for item in addr_list if item.strip()!="查看地图"]
+    # return "".join(addr_list)
 
 
 def return_value(value):
@@ -160,6 +176,7 @@ class ZhihuAnswerItem(scrapy.Item):
 
         return insert_sql, params
 
+
 class LagouJobItemLoader(ItemLoader):
     # 自定义itemloader
     default_output_processor = TakeFirst()
@@ -170,15 +187,47 @@ class LagouJobItem(scrapy.Item):
     url = scrapy.Field()
     url_object_id = scrapy.Field()
     salary = scrapy.Field()
-    job_city = scrapy.Field()
-    work_years = scrapy.Field()
-    degree_need = scrapy.Field()
+    job_city = scrapy.Field(
+        input_processor=MapCompose(remove_splash)
+    )
+    work_years = scrapy.Field(
+        input_processor=MapCompose(remove_splash)
+    )
+    degree_need = scrapy.Field(
+        input_processor=MapCompose(remove_splash)
+    )
     job_type = scrapy.Field()
     publish_time = scrapy.Field()
     job_advantage = scrapy.Field()
     job_desc = scrapy.Field()
-    job_addr = scrapy.Field()
+    job_addr = scrapy.Field(
+        input_processor=MapCompose(remove_tags, handle_jobaddr)
+    )
     company_name = scrapy.Field()
     company_url = scrapy.Field()
-    tags = scrapy.Field()
+    tags = scrapy.Field(
+        output_processor=Join(",")
+    )
     crawl_time = scrapy.Field()
+
+    def get_insert_sql(self):
+        insert_sql = """
+                    INSERT INTO
+                      lagou_job (title, url, url_object_id, salary, job_city, work_years, degree_need, job_type,
+                        publish_time, job_advantage, job_desc, job_addr, company_name, company_url,
+                        tags, crawl_time)
+                    VALUES
+                      (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                    ON DUPLICATE KEY UPDATE
+                      salary=VALUES(salary), job_desc=VALUES(job_desc)
+                """
+
+        params = (
+            self["title"], self["url"], self["url_object_id"], self["salary"], self["job_city"],
+            self["work_years"], self["degree_need"], self["job_type"],
+            self["publish_time"], self["job_advantage"], self["job_desc"],
+            self["job_addr"], self["company_name"], self["company_url"],
+            self["tags"], self["crawl_time"].strftime(SQL_DATETIME_FORMAT)
+        )
+
+        return insert_sql, params
