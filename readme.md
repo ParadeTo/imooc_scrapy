@@ -143,3 +143,9 @@ CREATE TABLE `lagou_job` (
 # 关于SEO友好
 非正常页面不要返回200，否则，百度爬虫等会认为这是一个正常页面，从而进行收录。
 而一旦重复的页面过多，会降低网站的权重，因为百度等会认为这是恶意竞争。
+
+# 关于Request cookie
+scrapy/downloadermiddlewares/cookies
+
+# ip代理
+西刺

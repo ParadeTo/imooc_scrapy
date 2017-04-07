@@ -4,6 +4,7 @@ import re
 import time
 import datetime
 import scrapy
+
 from PIL import Image
 from scrapy.loader import ItemLoader
 from items import ZhihuQuestionItem, ZhihuAnswerItem
@@ -73,7 +74,6 @@ class ZhihuSpider(scrapy.Spider):
             if match_obj:
                 # 如果提取到question相关的页面，则下载后交由提取函数处理
                 request_url = match_obj.group(1)
-                question_id = match_obj.group(2)
 
                 # 继续往下走
                 yield scrapy.Request(request_url, headers=self.headers, callback=self.parse_question)
