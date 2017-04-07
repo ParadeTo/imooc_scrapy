@@ -40,6 +40,10 @@ class ZhihuSpider(scrapy.Spider):
         "HOST": "www.zhihu.com",
     }
 
+    custom_settings = {
+        "COOKIES_ENABLED": True # 覆盖配置文件中的配置
+    }
+
     cookies = {
         'aliyungf_tc': 'AQAAABx1uDOkTQYASMn6OsSlYtv8kybR',
         'q_c1': 'aa5680616f0245e79f492f6ad4688417|1491363434000|1491363434000',

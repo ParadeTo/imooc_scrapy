@@ -139,6 +139,18 @@ CREATE TABLE `lagou_job` (
   PRIMARY KEY (`url_object_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 ```
+### 代理
+```
+DROP TABLE IF EXISTS `proxy_ip`;
+CREATE TABLE `proxy_ip` (
+  `ip` varchar(20) NOT NULL,
+  `port` varchar(255) NOT NULL,
+  `speed` float DEFAULT NULL,
+  `proxy_type` varchar(5) DEFAULT NULL,
+  PRIMARY KEY (`ip`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+```
 
 # 关于SEO友好
 非正常页面不要返回200，否则，百度爬虫等会认为这是一个正常页面，从而进行收录。
@@ -149,3 +161,20 @@ scrapy/downloadermiddlewares/cookies
 
 # ip代理
 西刺
+
+tor
+http://pkmishra.github.io/blog/2013/03/18/how-to-run-scrapy-with-TOR-and-multiple-browser-agents-part-1-mac/
+
+# 验证码识别
+* tesseract-ocr
+识别率很低
+* 在线打码
+* 人工打码
+
+## 云打码
+http://www.yundama.com
+
+* 用户账号
+youxingzhi 81051766
+
+* 开发者账号

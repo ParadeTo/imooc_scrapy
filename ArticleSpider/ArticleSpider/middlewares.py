@@ -7,6 +7,8 @@
 from fake_useragent import UserAgent
 from scrapy import signals
 
+from tools.crawl_xici_ip import GetIP
+
 
 class ArticlespiderSpiderMiddleware(object):
     # Not all methods need to be defined. If a method is not defined,
@@ -71,4 +73,10 @@ class RandomUserAgentMiddleware(object):
             return getattr(self.ua, self.ua_type)
 
         request.headers.setdefault("User-Agent", get_ua())
-        # request.meta["proxy"] = "http://106.113.10.49:37056"
+        # request.meta["proxy"] = "http://120.132.55.230:80"
+
+
+class RandomProxyMiddleware(object):
+    def process_request(self, request, spider):
+        get_ip = GetIP()
+        request.meta["proxy"] = get_ip.get_random_ip()

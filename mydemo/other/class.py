@@ -23,3 +23,8 @@ class TestAttr(object):
 
 t = TestAttr()
 print(t.name)
+
+for i in range(3, 0, -1):
+    print (i)
+
+
