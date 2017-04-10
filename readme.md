@@ -178,3 +178,9 @@ http://www.yundama.com
 youxingzhi 81051766
 
 * 开发者账号
+
+# 动态网页抓取selenium
+* 浏览器自动化测试框架
+* python api
+
+    http://selenium-python.readthedocs.io/api.html
