@@ -20,9 +20,12 @@ class TestAttr(object):
     def __init__(self):
         self.name = "ddd"
 
+    def test1(a):
+        print("test1")
+
 
 t = TestAttr()
-print(t.name)
+t.test1()
 
 for i in range(3, 0, -1):
     print (i)

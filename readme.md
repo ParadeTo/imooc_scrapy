@@ -184,3 +184,26 @@ youxingzhi 81051766
 * python api
 
     http://selenium-python.readthedocs.io/api.html
+    
+# phantomjs，无界面的浏览器
+多进程情况下其性能下降很严重
+
+# 其他动态网页获取技术
+* pyvirtualdisplay
+* selenium grid
+* splinter
+
+# 暂停，重启
+```javascript
+scrapy crawl lagou -s JOBDIR=job_info/001
+```
+
+如果此时``ctrl+c``停止，爬虫会先处理掉已经发出去的request然后再停止，然后保存爬虫状态
+
+# scrapy 去重原理
+``scrapy->dupefilters``
+
+# telnet
+```javascript
+telnet localhost:6023
+```

@@ -4,8 +4,10 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/spider-middleware.html
+import time
 from fake_useragent import UserAgent
 from scrapy import signals
+from scrapy.http import HtmlResponse
 
 from tools.crawl_xici_ip import GetIP
 
@@ -80,3 +82,14 @@ class RandomProxyMiddleware(object):
     def process_request(self, request, spider):
         get_ip = GetIP()
         request.meta["proxy"] = get_ip.get_random_ip()
+
+class JSPageMiddleware(object):
+
+    # 通过chrome请求动态网页，以jobbole为例子
+    def process_request(self, request, spider):
+        if spider.name == "jobbole":
+            spider.browser.get(request.url)
+            time.sleep(3)
+            print("访问:{0}".format(request.url))
+            # 不发送到下载器，直接返回给spider
+            return HtmlResponse(url=spider.browser.current_url, body=spider.browser.page_source, encoding="utf-8", request=request)

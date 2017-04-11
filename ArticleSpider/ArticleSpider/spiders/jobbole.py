@@ -5,18 +5,30 @@ import datetime
 
 from scrapy.http import Request
 from scrapy.loader import ItemLoader
-from urllib import parse
+from scrapy.xlib.pydispatch import dispatcher
+from scrapy import signals
+
 from ArticleSpider.items import JobBoleArticleItem
 from ArticleSpider.utils.common import get_md5
-
 from ArticleSpider.items import ArticleItemLoader
 
+from selenium import webdriver
+from urllib import parse
 
 class JobboleSpider(scrapy.Spider):
     name = "jobbole"
     allowed_domains = ["blog.jobbole.com"]
     start_urls = ['http://blog.jobbole.com/all-posts/']
     # start_urls = ['http://xazkkj.eicp.net/']
+
+    # def __init__(self):
+    #     self.browser = webdriver.Chrome(executable_path="e:/soft/selenium/chromedriver.exe")
+    #     super(JobboleSpider, self).__init__()
+    #     dispatcher.connect(self.spider_closed, signals.spider_closed) # 类似于js的事件
+    #
+    # def spider_closed(self, spider):
+    #     # 爬虫退出时关闭chrome
+    #     self.browser.quit()
 
     def parse(self, response):
         """
