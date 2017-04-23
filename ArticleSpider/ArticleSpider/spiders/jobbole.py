@@ -21,20 +21,35 @@ class JobboleSpider(scrapy.Spider):
     start_urls = ['http://blog.jobbole.com/all-posts/']
     # start_urls = ['http://xazkkj.eicp.net/']
 
+    # 信号处理
     # def __init__(self):
     #     self.browser = webdriver.Chrome(executable_path="e:/soft/selenium/chromedriver.exe")
     #     super(JobboleSpider, self).__init__()
-    #     dispatcher.connect(self.spider_closed, signals.spider_closed) # 类似于js的事件
+    #     dispatcher.connect(self.spider_closed, signals.spider_closed) # 类似于js的事件，当spider关闭时执行    #self.spider_closed
     #
     # def spider_closed(self, spider):
     #     # 爬虫退出时关闭chrome
     #     self.browser.quit()
+
+    # 收集404的url和404页面数，没有下面这个直接不会处理404的页面
+    handle_httpstatus_list = [404]
+
+    def __init__(self):
+        self.fail_urls = []
+        dispatcher.connect(self.handle_spider_closed, signals.spider_closed)
+
+    # 爬虫结束时调用这个方法
+    def handle_spider_closed(self, spider, reason):
+        self.crawler.stats.set_value('failed_urls', ','.join(self.fail_urls))
 
     def parse(self, response):
         """
         1. 列表页所有文章url解析并进行具体字段的解析
         2. 获取下一页的url并交给scrapy进行下载，下载完成后交给parse函数
         """
+        if response.status == 404:
+            self.fail_urls.append(response.url)
+            self.crawler.stats.inc_value('failed_url')
 
         # 解析列表页中的所有url
         post_nodes = response.css("#archive .floated-thumb .post-thumb a")

@@ -207,3 +207,10 @@ scrapy crawl lagou -s JOBDIR=job_info/001
 ```javascript
 telnet localhost:6023
 ```
+
+# 状态收集器
+
+# 信号
+
+# 拓展
+利用信号来实现一些切面编程

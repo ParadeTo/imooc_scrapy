@@ -11,8 +11,9 @@ from twisted.enterprise import adbapi
 
 import codecs
 import json
-import MySQLdb
-import MySQLdb.cursors
+import pymysql
+# import MySQLdb
+# import MySQLdb.cursors
 
 
 class ArticlespiderPipeline(object):
@@ -50,7 +51,7 @@ class JsonExporterPipeline(object):
 class MysqlPipeline(object):
     # 这里是同步的操作，有可能后期插入速度跟不上爬取速度
     def __init__(self):
-        self.conn = MySQLdb.connect('127.0.0.1', 'root', '123456', 'scrapy', charset="utf8", use_unicode=True)
+        self.conn = pymysql.connect('127.0.0.1', 'root', '123456', 'scrapy', charset="utf8", use_unicode=True)
         self.cursor = self.conn.cursor()
 
     def process_item(self, item, spider):
@@ -77,11 +78,11 @@ class MysqlTwistedPipeline(object):
             user = settings['MYSQL_USER'],
             passwd = settings['MYSQL_PASSWORD'],
             charset = "utf8",
-            cursorclass = MySQLdb.cursors.DictCursor,
+            cursorclass = pymysql.cursors.DictCursor,
             use_unicode = True
         )
 
-        dbpool = adbapi.ConnectionPool("MySQLdb", **dbparams)
+        dbpool = adbapi.ConnectionPool("pymysql", **dbparams)
 
         return cls(dbpool)
 
@@ -90,6 +91,7 @@ class MysqlTwistedPipeline(object):
         使用twisted将mysql插入变成异步执行
         """
         query = self.dbpool.runInteraction(self.do_insert, item)
+        # query是deffered对象，errback是回调函数
         query.addErrback(self.handle_error, item, spider)
 
     def handle_error(self, failure, item, spider):
