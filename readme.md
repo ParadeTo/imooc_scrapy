@@ -214,3 +214,26 @@ telnet localhost:6023
 
 # 拓展
 利用信号来实现一些切面编程
+
+# core/scheduler
+核心函数：
+## enqueue_request
+```javascript
+pqclass = load_object(settings['SCHEDULER_PRIORITY_QUEUE'])
+dqclass = load_object(settings['SCHEDULER_DISK_QUEUE'])
+mqclass = load_object(settings['SCHEDULER_MEMORY_QUEUE'])
+```
+
+在setting/default_settings.py
+```
+SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleLifoDiskQueue'
+SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.LifoMemoryQueue'
+SCHEDULER_PRIORITY_QUEUE = 'queuelib.PriorityQueue'
+```
+
+```
+# 状态保存到磁盘jbdir
+dqok = self._dqpush(request)
+...
+self.dqs.push(reqd, -request.priority)
+```

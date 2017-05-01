@@ -158,6 +158,7 @@ class Scheduler(object):
         self.df.clear()
         self.queue.clear()
 
+    # 核心函数    spider 里面yield一个Request 会调用该函数
     def enqueue_request(self, request):
         if not request.dont_filter and self.df.request_seen(request):
             self.df.log(request, self.spider)

@@ -15,6 +15,7 @@ class RedisMixin(object):
     # Redis client placeholder.
     server = None
 
+    # 重写入口函数
     def start_requests(self):
         """Returns a batch of start requests from redis."""
         return self.next_requests()
@@ -74,6 +75,7 @@ class RedisMixin(object):
 
     def next_requests(self):
         """Returns a request to be scheduled or none."""
+        # 使用set或者list 要与我们push到redis中的方式一致
         use_set = self.settings.getbool('REDIS_START_URLS_AS_SET', defaults.START_URLS_AS_SET)
         fetch_one = self.server.spop if use_set else self.server.lpop
         # XXX: Do we need to use a timeout here?
@@ -86,7 +88,7 @@ class RedisMixin(object):
                 break
             req = self.make_request_from_data(data)
             if req:
-                yield req
+                yield req # 转到scheduler
                 found += 1
             else:
                 self.logger.debug("Request not made from data: %r", data)
@@ -107,7 +109,7 @@ class RedisMixin(object):
 
         """
         url = bytes_to_str(data, self.redis_encoding)
-        return self.make_requests_from_url(url)
+        return self.make_requests_from_url(url) # scrapy.Spider的方法
 
     def schedule_next_requests(self):
         """Schedules a request if available"""
