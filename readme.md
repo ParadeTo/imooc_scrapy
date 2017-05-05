@@ -237,3 +237,11 @@ dqok = self._dqpush(request)
 ...
 self.dqs.push(reqd, -request.priority)
 ```
+
+
+# bloomfilter的原理
+http://blog.csdn.net/lmh12506/article/details/7575651
+
+# redis setbit
+set mykey 7 1 # 从左往右第8位设置为1
+set mykey 32 1 # \x00\x00\x00\x00\x80
