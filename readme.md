@@ -245,3 +245,23 @@ http://blog.csdn.net/lmh12506/article/details/7575651
 # redis setbit
 set mykey 7 1 # 从左往右第8位设置为1
 set mykey 32 1 # \x00\x00\x00\x00\x80
+
+# elasticsearch
+## elk 日志分析系统
+## 安装及使用
+1.安装jdk (>=8)
+2.安装elasticsearch-rtf
+github
+3.head插件(类似navicat)和kibana插件(操作elasticsearch)
+github
+
+* head连接不了的解决办法
+启动elasticsearch时候进行配置
+```javascript
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+http.cors.allow-methods: OPTIONS, HEAD, GET, POST, PUT, DELETE
+http.cors.allow-headers: "X-Requested-With, Content-Type, Content-Length, X-User"
+```
+
+* kibana版本与elasticsearch-rtf要一致
