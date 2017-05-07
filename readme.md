@@ -48,6 +48,7 @@ python3 全部转化为unicode
 u"abc" 表示unicode
 
 window下：
+
 ```
 s = '我用python' # window下是gb2312 linux下是utf8
 s.encode("utf8") # 会出错，s必须是unicode
@@ -194,7 +195,7 @@ youxingzhi 81051766
 * splinter
 
 # 暂停，重启
-```javascript
+```
 scrapy crawl lagou -s JOBDIR=job_info/001
 ```
 
@@ -204,7 +205,7 @@ scrapy crawl lagou -s JOBDIR=job_info/001
 ``scrapy->dupefilters``
 
 # telnet
-```javascript
+```
 telnet localhost:6023
 ```
 
@@ -218,13 +219,14 @@ telnet localhost:6023
 # core/scheduler
 核心函数：
 ## enqueue_request
-```javascript
+```
 pqclass = load_object(settings['SCHEDULER_PRIORITY_QUEUE'])
 dqclass = load_object(settings['SCHEDULER_DISK_QUEUE'])
 mqclass = load_object(settings['SCHEDULER_MEMORY_QUEUE'])
 ```
 
 在setting/default_settings.py
+
 ```
 SCHEDULER_DISK_QUEUE = 'scrapy.squeues.PickleLifoDiskQueue'
 SCHEDULER_MEMORY_QUEUE = 'scrapy.squeues.LifoMemoryQueue'
@@ -244,4 +246,285 @@ http://blog.csdn.net/lmh12506/article/details/7575651
 
 # redis setbit
 set mykey 7 1 # 从左往右第8位设置为1
+
 set mykey 32 1 # \x00\x00\x00\x00\x80
+
+# elasticsearch 
+## 概念
+|elasticsearch|mysql|
+|--------------|-----|
+|index(索引)|数据库|
+|type(类型)|表|
+|documents(文档)|行|
+|fiels|列|
+
+* 索引还可以做动词
+
+## 倒排索引
+TF-IDF
+
+* 大小写转换
+* 词干抽取 looking look应该为一个词
+* 分词
+* 倒排索引文件过大－压缩编码
+
+## kibana操作
+```
+PUT lagou
+{
+  "settings": {
+    "index": {
+      "number_of_shards": 5,
+      "number_of_replicas": 1
+    }
+  }
+}
+
+GET lagou/_settings
+GET _all/_settings
+GET .kibana,lagou/_settings
+
+PUT lagou/_settings
+{
+  "number_of_replicas": 1
+}
+
+GET _all
+
+# index/type/document(不指定会自动不指定会自动gen)
+PUT lagou/job/1
+{
+  "title": "python分布式爬虫开发",
+  "salary_min": 15000,
+  "city": "北京",
+  "company": {
+    "name": "百度",
+    "companyy_addr": "北京市软件园"
+  },
+  "publish_date": "2017-04-16",
+  "comments": 15
+}
+
+GET lagou/job/1
+GET lagou/job/1?_source=title
+
+POST lagou/job/1/_update
+{
+  "doc": {
+    "comments": 20
+  }
+}
+
+DELETE lagou/job/1
+DELETE lagou/job
+
+# mget
+PUT testdb/job1/1
+{
+  "title": "job1_1"
+}
+PUT testdb/job1/2
+{
+  "title": "job1_2"
+}
+PUT testdb/job2/1
+{
+  "title": "job2_1"
+}
+PUT testdb/job2/2
+{
+  "title": "job2_2"
+}
+
+
+GET _mget
+{
+  "docs": [
+    {
+      "_index": "testdb",
+      "_type": "job1",
+      "_id": "1"
+    },
+    {
+      "_index": "testdb",
+      "_type": "job2",
+      "_id": "2"
+    }
+  ]
+}
+
+GET testdb/_mget
+{
+  "docs": [
+    {
+      "_type": "job1",
+      "_id": "1"
+    },
+    {
+      "_type": "job2",
+      "_id": "2"
+    }
+  ]
+}
+
+GET testdb/job1/_mget
+{
+  "ids": [1, 2]
+}
+
+# bulk must in one line
+# all opr will be passed to one node, the node deliver the opr to other replicas acoording to meta info, and receive the response from them, then return. 
+POST _bulk
+{"index": { "_index": "lagou","_type": "job","_id": "2" }}
+{  "title": "python分布式爬虫开发2",  "salary_min": 16000,  "city": "北京",  "company": {"name": "百度", "companyy_addr":"北京市软件园2"  },"publish_date": "2017-04-17", "comments": 15}
+{  "index": { "_index": "lagou","_type": "job", "_id": "3"}}
+{  "title": "python分布式爬虫开发3",  "salary_min": 17000,  "city": "北京",  "company": {    "name": "百度",    "companyy_addr": "北京市软件园3"  },  "publish_date": "2017-04-18",  "comments": 15}
+
+POST _bulk
+{"update":{"_id":"1","_type":"type1","_index":"index1"}}
+{"doc":{"field2":"value2"}}
+```
+
+## 映射（mapping）
+elasticsearch会根据我们的数据自动映射属性的类型
+
+### 内置类型
+* text
+* keyword(不会分析，不会建立倒排索引，查询时必须全部匹配到)
+* 数字: long, integer, short, byte, double, float
+* date
+* boolean
+* binary: will not retrieve
+* object 
+* nested: like array in javascript
+* geo
+* ip, competion
+
+### 内置属性
+* store: yes表示存储
+* index：yes表示分析，默认true，适合string类型
+* null_value: 字段默认值
+* analyzer 分词器，默认为standard，可以用whitespace，simple，english
+* include_in_all 如果某个字段不想被搜索到，可以设置为false
+* format 时间格式字符串的模式，适合date
+
+### example
+一旦数据类型确定了，不能更改
+
+```
+PUT lagou
+{
+  "mappings": {
+    "job": {
+      "properties":{
+        "title":{
+          "type":"text"
+        },
+        "salary_min":{
+          "type":"integer"
+        },
+        "city":{
+          "type":"keyword"
+        },
+        "company":{
+          "properties": {
+            "name": {
+              "type":"text"
+            },
+            "company_addr":{
+              "type":"text"
+            },
+            "employee_count":{
+              "type":"integer"
+            }
+          }
+        },
+        "publish_date":{
+          "type":"date",
+          "format":"yyyy-MM-dd"
+        },
+        "comments":{
+          "type":"integer"
+        }
+      }
+    }
+  }
+}
+
+GET lagou/_mapping
+
+PUT lagou/job/1
+{
+  "title": "python分布式爬虫开发",
+  "salary_min": 15000,
+  "city": "北京",
+  "company": {
+    "name": "百度",
+    "companyy_addr": "北京市软件园",
+    "employee_count": 44
+  },
+  "publish_date": "2017-04-16",
+  "comments": 15
+}
+```
+
+## 查询
+* 基本查询
+* 组合查询
+* 过滤
+
+```
+# match
+# 会对查询的内容进行分词，只要分词中有一个匹配即可
+GET lagou/job/_search
+{
+	"query": {
+		"match": {
+			"title": "python"
+		}
+	}
+}
+
+# term
+# 不会对查询词做处理
+GET lagou/job/_search
+{
+	"query": {
+		"term": {
+			"title": "python"
+		}
+	}
+}
+
+# terms
+# 数组中有匹配就返回
+GET lagou/job/_search
+{
+	"query": {
+		"terms": {
+			"title": ["python","爬虫"]
+		}
+	}
+}
+
+# 控制返回数量，可用作分页
+GET lagou/job/_search
+{
+	"query": {
+		"match": {
+			"title": "python"
+		}
+	},
+	"from":1, # 开始的index 从0开始
+	"size":2 # 数量
+}
+
+# match_all
+GET lagou/job/_search
+{
+	"query": {
+		"match_all": {}
+	}
+}
+
+```
