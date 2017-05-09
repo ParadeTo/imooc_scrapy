@@ -527,4 +527,214 @@ GET lagou/job/_search
 	}
 }
 
+# match_phrase 短语查询
+GET lagou/_search
+{
+	"query": {
+		"match_phrase": {
+			"title": {
+				"query": "python系统", # 分词，且必须满足所有的词
+				"slop": 6 # 分词之间的最小距离python与系统之间的距离必须小于3
+			}
+		}
+	}
+}
+
+# multi_match 
+GET lagou/job/_search
+{
+	"query": {
+		"multi_match": {
+			"query": "python",
+			"fields":["title^3", "desc"] # title desc两者中满足其一 ^3表示权重，选择回来的结果其分数会比较高
+		}
+	}
+}
+
+# 返回特定字段
+GET lagou/job/_search
+{
+	"stored_fields":["title","company_name"], # 返回的字段
+	"query": {
+		"match": {
+			"title": "python"
+		}
+	}
+}
+
+# sort
+GET lagou/job/_search
+{
+	"query": {
+		"match_all": {}
+	},
+	"sort": [{
+		"comments":{
+			"order":"desc"
+		}
+	}]
+}
+
+# range
+GET lagou/job/_search
+{
+	"query": {
+		"range": {
+			"comments": {
+				"gte": 10,
+				"lte": 20,
+				"boost": 2.0 # 权重
+			}
+		}
+	}
+}
+
+GET lagou/job/_search
+{
+	"query": {
+		"range": {
+			"add_time": {
+				"gte": "2017-04-01",
+				"lte": "now",
+			}
+		}
+	}
+}
+
+# wildcard 模糊查询
+GET lagou/job/_search
+{
+	"query": {
+		"wildcard": {
+			"title": {
+				"value": "pyth*n",
+				"boost": 2.0,
+			}
+		}
+	}
+}
+```
+
+## bool查询
+```
+bool: {
+	"filter":[], # 过滤，不参与打分
+	"must":[], # 都必须满足
+	"should":[], # 满足至少一个
+	"must_not":[] # 一个都不满足
+}
+```
+
+### example
+```
+# select * from testjob where salary=20
+GET lagou/testjob/_search
+{
+	"query": {
+		"bool": {
+			"must":{
+				"match_all":{}
+			},
+			"filter":{
+				"term":{
+					"salary":[10, 20]
+				}
+			}
+		}
+	}
+}
+
+# select * from testjob where title="Python"
+GET lagou/testjob/_search
+{
+	"query": {
+		"bool": {
+			"must":{
+				"match_all":{}
+			},
+			"filter":{
+				"term":{
+					"title": "Python" # Python为text类型，入库的时候已经转为小写了，可以将term改为match
+				}
+			}
+		}
+	}
+}
+
+# select * from testjob where (salary=20 or title=Python) AND (price != 30)
+GET lagou/testjob/_search
+{
+	"query": {
+		"bool": {
+			"should": [
+				{"term":{"salary":20}},
+				{"term":{"title":"python"}}
+			],
+			"must_not": {
+				"term":{"price":30}
+			}
+		}
+	}
+}
+
+# 嵌套查询
+# select * from testjob where title="python" or (title="elasticsearch" AND salary=30)
+GET lagou/testjob/_search
+{
+	"query": {
+		"bool": {
+			"should": [
+				{"term":{"title":"python"}},
+				{
+					"bool":{
+						"must":[
+							{"term":{"title":"elasticsearch"}},
+							{"term":{"salary":30}},
+						]
+					}
+				}
+			]
+		}
+	}
+}
+
+# 过滤空和非空
+# select tags from testjob where tags is not null
+GET lagou/testjob/_search
+{
+	"query": {
+		"bool": {
+			"filter": {
+				"exists": {
+					"field":"tags"
+				}
+			}
+		}
+	}
+}
+
+# select tags from testjob where tags is null 或者该字段不存在也可以
+GET lagou/testjob/_search
+{
+	"query": {
+		"bool": {
+			"must_not": {
+				"exists": {
+					"field":"tags"
+				}
+			}
+		}
+	}
+}
+
+
+
+
+
+# 查看分析器解析的结果
+GET _analyze
+{
+	"analyzer": "ik_max_word",
+	"text": "Python网络开发工程师"
+}
 ```
