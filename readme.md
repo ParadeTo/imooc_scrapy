@@ -758,6 +758,10 @@ GET _analyze
 	"analyzer": "ik_max_word",
 	"text": "Python网络开发工程师"
 }
+
+# completion suggestor 自动补全，详见官网文档
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
+
 ```
 
 ## scrapy数据写到es中

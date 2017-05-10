@@ -22,6 +22,8 @@ class ArticlespiderItem(scrapy.Item):
     # name = scrapy.Field()
     pass
 
+def gen_suggests(index, index_tuple):
+    
 
 def remove_splash(value):
     # 拉勾-去掉工作城市之间的斜杠
@@ -112,6 +114,8 @@ class JobBoleArticleItem(scrapy.Item):
         article.url = self["url"]
         article.tags = self["tags"]
         article.meta.id = self["url_object_id"]
+
+        article.suggest = [{"input": [], "weight": 2}]
 
         article.save()
         return
