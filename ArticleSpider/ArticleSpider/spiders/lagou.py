@@ -4,8 +4,10 @@ import scrapy
 from scrapy.linkextractors import LinkExtractor
 from scrapy.spiders import CrawlSpider, Rule
 
-from items import LagouJobItemLoader, LagouJobItem
-from utils.common import get_md5
+
+
+from ArticleSpider.items import LagouJobItemLoader, LagouJobItem
+from ArticleSpider.utils.common import get_md5
 
 
 class LagouSpider(CrawlSpider):
