@@ -14,6 +14,9 @@ import json
 import pymysql
 # import MySQLdb
 # import MySQLdb.cursors
+from w3lib.html import remove_tags
+
+from models.es_types import ArticleType
 
 
 class ArticlespiderPipeline(object):
@@ -117,5 +120,5 @@ class ArticleImagePipeline(ImagesPipeline):
 
 class ElasticsearchPipeline(object):
     def process_item(self, item, spider):
-        # item 转换为es的数据
-        pass
+        item.save_to_es()
+        return item

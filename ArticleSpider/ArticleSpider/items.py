@@ -11,6 +11,7 @@ import scrapy
 from scrapy.loader import ItemLoader
 from w3lib.html import remove_tags
 
+from models.es_types import ArticleType
 from utils.common import extract_num
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from settings import SQL_DATE_FORMAT, SQL_DATETIME_FORMAT
@@ -95,6 +96,25 @@ class JobBoleArticleItem(scrapy.Item):
         params = (self['title'], self['url'], self['url_object_id'], self['create_date'], self['fav_nums'])
 
         return insert_sql, params
+
+    def save_to_es(self):
+        # item 转换为es的数据
+        article = ArticleType()
+        article.title = self["title"]
+        article.create_date = self["create_date"]
+        article.content = remove_tags(self["content"])
+        article.front_image_url = self["front_image_url"]
+        if "front_image_path" in self:
+            article.front_image_path = self["front_image_path"]
+        article.praise_nums = self["praise_nums"]
+        article.fav_nums = self["fav_nums"]
+        article.comment_nums = self["comment_nums"]
+        article.url = self["url"]
+        article.tags = self["tags"]
+        article.meta.id = self["url_object_id"]
+
+        article.save()
+        return
 
 
 class ZhihuQuestionItem(scrapy.Item):
