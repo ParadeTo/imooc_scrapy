@@ -17,6 +17,7 @@ from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from settings import SQL_DATE_FORMAT, SQL_DATETIME_FORMAT
 
 from elasticsearch_dsl.connections import connections
+
 es = connections.create_connection(ArticleType._doc_type.using, hosts=["localhost"])
 
 
@@ -133,7 +134,9 @@ class JobBoleArticleItem(scrapy.Item):
         article.tags = self["tags"]
         article.meta.id = self["url_object_id"]
 
-        article.suggest = gen_suggests(ArticleType._doc_type.index, ((article.title, 10), (article.tags, 7))) # [{'weight': 10, 'input': ['有解', '项目', '什么', '解药', '延期']}, {'weight': 7, 'input': ['项目', '管理']}]
+        # 返回示例
+        # [{'weight': 10, 'input': ['有解', '项目', '什么', '解药', '延期']}, {'weight': 7, 'input': ['项目', '管理']}]
+        article.suggest = gen_suggests(ArticleType._doc_type.index, ((article.title, 10), (article.tags, 7)))
 
         article.save()
         return
