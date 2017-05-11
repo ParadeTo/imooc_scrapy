@@ -16,14 +16,32 @@ from utils.common import extract_num
 from scrapy.loader.processors import MapCompose, TakeFirst, Join
 from settings import SQL_DATE_FORMAT, SQL_DATETIME_FORMAT
 
+from elasticsearch_dsl.connections import connections
+es = connections.create_connection(ArticleType._doc_type.using, hosts=["localhost"])
+
 
 class ArticlespiderItem(scrapy.Item):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
 
-def gen_suggests(index, index_tuple):
-    
+def gen_suggests(index, info_tuple):
+    # 根据字符串生成搜索建议数组
+    used_words = set()
+    suggests = []
+    for text, weight in info_tuple:
+        if text:
+            # 调用es的ananlyzer的接口分析字符串（分词，大小写转换）
+            words = es.indices.analyze(index=index, analyzer="ik_max_word", params={"filter": ["lowercase"]}, body=text)
+            analyzed_words = set([r["token"] for r in words["tokens"] if len(r["token"])>1])
+            new_words = analyzed_words - used_words # 先处理的为准
+        else:
+            new_words = set()
+
+        if new_words:
+            suggests.append({"input": list(new_words), "weight": weight})
+
+    return suggests
 
 def remove_splash(value):
     # 拉勾-去掉工作城市之间的斜杠
@@ -115,7 +133,7 @@ class JobBoleArticleItem(scrapy.Item):
         article.tags = self["tags"]
         article.meta.id = self["url_object_id"]
 
-        article.suggest = [{"input": [], "weight": 2}]
+        article.suggest = gen_suggests(ArticleType._doc_type.index, ((article.title, 10), (article.tags, 7))) # [{'weight': 10, 'input': ['有解', '项目', '什么', '解药', '延期']}, {'weight': 7, 'input': ['项目', '管理']}]
 
         article.save()
         return

@@ -9,15 +9,15 @@ connections.create_connection(hosts=["localhost"])
 
 # 解决官方代码报错的问题
 class CustomAnalyzer(_CustomAnalysis):
-    def ge_analysis_definition(self):
+    def get_analysis_definition(self):
         return {}
 
-ik_analyzer = CustomAnalyzer("ik_max_word", filter="lowercase") # 大小写转换
+# ik_analyzer = CustomAnalyzer("ik_max_word", filter="lowercase") # 大小写转换
 
 class ArticleType(DocType):
     # 伯乐在线文章类型
-    # suggest = Completion(analyzer="ik_max_word") # 官方代码有问题，不能这么用
-    suggest = Completion(analyzer=ik_analyzer) # 这么用
+    suggest = Completion(analyzer="ik_max_word") # 官方代码有问题，不能这么用，事实证明可以这么用
+    # suggest = Completion(analyzer=ik_analyzer) # 这么用
     title = Text(analyzer="ik_max_word")
     create_date = Date()
     url = Keyword()
