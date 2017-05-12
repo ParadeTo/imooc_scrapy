@@ -18,7 +18,7 @@ from settings import SQL_DATE_FORMAT, SQL_DATETIME_FORMAT
 
 from elasticsearch_dsl.connections import connections
 
-es = connections.create_connection(ArticleType._doc_type.using, hosts=["localhost"])
+es = connections.create_connection(ArticleType._doc_type.using)
 
 
 class ArticlespiderItem(scrapy.Item):

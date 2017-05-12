@@ -762,6 +762,36 @@ GET _analyze
 # completion suggestor 自动补全，详见官网文档
 # https://www.elastic.co/guide/en/elasticsearch/reference/current/search-suggesters.html
 
+
+# fuzzy模糊搜索
+GET jobbole/article/_search
+{
+  "query": {
+    "fuzzy": {
+      "title":{
+        "value": "linux",
+        "fuzziness": 2,
+        "prefix_length": 0
+      }
+    }
+  }
+}
+
+# suggest
+GET lagou/testjob/_search
+{
+	"suggest": {
+		"my-suggest": {
+			"text":"linux" # linu linxx 等都可以搜到linux
+			"completion": {
+				"field": "suggest",  # 自己生成的suggest字段
+				"fuzzy":{
+					"fuzziness":2
+				}
+			}
+		}
+	}
+}
 ```
 
 ## scrapy数据写到es中
