@@ -38,7 +38,9 @@
             <div class="historyArea">
             	<p class="history">
                 	<label>热门搜索：</label>
-                    
+                    {% for search_word in topn_search %}
+                        <a href="/search?q={{ search_word }}">{{ search_word }}</a>
+                    {% endfor %}
                 </p>
                 <p class="history mysearch">
                 	<label>我的搜索：</label>
@@ -65,7 +67,7 @@
 <script type="text/javascript" src="{% static 'js/global.js' %}"></script>
 <script type="text/javascript">
     var suggest_url = "{% url "suggest" %}"
-    var search_url = "/search/"
+    var search_url = "{% url "search" %}"
 
 
 	$('.searchList').on('click', '.searchItem', function(){

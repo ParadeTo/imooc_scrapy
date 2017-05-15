@@ -792,6 +792,27 @@ GET lagou/testjob/_search
 		}
 	}
 }
+
+# search关键字highlight
+GET jobbole/_search
+{
+  "query": {
+    "multi_match": {
+        "query": "王小波的水平",
+        "fields": ["tags", "title", "content"]
+    }
+                },
+                "from": 0,
+                "size": 10,
+                "highlight": {
+                    "pre_tags": ["<span class='keyWord'>"],
+                    "post_tags": ["</span>"],
+                    "fields": {
+                        "title": {},
+                        "content": {}
+                    }
+                }
+}
 ```
 
 ## scrapy数据写到es中
@@ -801,4 +822,27 @@ https://elasticsearch-dsl.readthedocs.io/en/latest/persistence.html#doctype
 
 ```
 pip install elasticsearch-dsl
+```
+
+# scrapyd 部署
+http://scrapyd.readthedocs.io/en/stable/
+
+```
+workon article_spider
+pip install scrapyd
+```
+
+
+``pip install scrapyd-client``
+
+/Library/Python/2.7/site-packages/scrapyd-client/scrapyd-deploy
+
+/usr/local/bin/scrapyd-deploy
+
+* windows解决办法
+新建scrapyd-deploy.bat
+
+```
+@echo off
+"e:\**\python.exe" "e:\**\scrapyd-deploy" %1 %2 %3 %4 %5 %6 %7 %8 %9
 ```

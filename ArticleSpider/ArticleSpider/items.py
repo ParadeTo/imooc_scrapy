@@ -7,6 +7,7 @@
 import datetime
 import re
 import scrapy
+import redis
 
 from scrapy.loader import ItemLoader
 from w3lib.html import remove_tags
@@ -20,6 +21,7 @@ from elasticsearch_dsl.connections import connections
 
 es = connections.create_connection(ArticleType._doc_type.using)
 
+redis_cli = redis.StrictRedis(host="localhost")
 
 class ArticlespiderItem(scrapy.Item):
     # define the fields for your item here like:
@@ -139,6 +141,9 @@ class JobBoleArticleItem(scrapy.Item):
         article.suggest = gen_suggests(ArticleType._doc_type.index, ((article.title, 10), (article.tags, 7)))
 
         article.save()
+
+        redis_cli.incr('jobbole_count')
+
         return
 
 
