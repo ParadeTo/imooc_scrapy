@@ -4,7 +4,7 @@ import time
 from scrapy.dupefilters import BaseDupeFilter
 from scrapy.utils.request import request_fingerprint
 
-from ScrapyRedis.ScrapyRedis.utils.bloomfilter import PyBloomFilter, conn
+from ScrapyRedis.utils.bloomfilter import PyBloomFilter, conn
 from . import defaults
 from .connection import get_redis_from_settings
 

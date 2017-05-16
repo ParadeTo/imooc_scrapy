@@ -4,9 +4,11 @@ from urllib import parse
 from scrapy import Request
 from scrapy_redis.spiders import RedisSpider
 
+
 class MySpider(RedisSpider):
     name = 'jobbole'
-    allowed_domains = ["blog.jobbole.com"]
+    allowed_domains = ["blog.jobbole.com", "www.jobbole.com"]
+    start_urls = ['http://blog.jobbole.com/all-posts']
     redis_key = 'jobbole:start_urls'
 
     def parse(self, response):
