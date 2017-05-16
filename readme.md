@@ -825,6 +825,8 @@ pip install elasticsearch-dsl
 ```
 
 # scrapyd 部署
+
+## scrapyd
 http://scrapyd.readthedocs.io/en/stable/
 
 ```
@@ -833,6 +835,7 @@ pip install scrapyd
 ```
 
 
+## scrapyd-client
 ``pip install scrapyd-client``
 
 /Library/Python/2.7/site-packages/scrapyd-client/scrapyd-deploy
@@ -845,4 +848,40 @@ pip install scrapyd
 ```
 @echo off
 "e:\**\python.exe" "e:\**\scrapyd-deploy" %1 %2 %3 %4 %5 %6 %7 %8 %9
+```
+
+## scrapy.cfg
+```
+[deploy:bobby]
+url = http://localhost:6800/
+project = ArticleSpider
+```
+
+## scrapyd-deploy bobby -p ArticleSpider
+将本地项目打包成egg，传递给scrapyd server中去
+
+## 运行爬虫
+通过api的方式
+
+http://scrapyd.readthedocs.io/en/stable/api.html#schedule-json
+
+## 错误
+```
+TypeError: __init__() got an unexpected keyword argument '_job'
+```
+
+spiders.jobbole
+
+```
+    def __init__(self):
+        self.fail_urls = []
+        dispatcher.connect(self.handle_spider_closed, signals.spider_closed)
+```
+
+改为
+
+```
+    def __init__(self, **kwargs):
+        self.fail_urls = []
+        dispatcher.connect(self.handle_spider_closed, signals.spider_closed)
 ```
